@@ -10,11 +10,11 @@ const customers={template:`
     <div class="col-md-8">
         <div class="input-group mb-3">
             <span class="input-group-text">Enter your phone number</span>
-            <input type="text" class="form-control" v-model="phoneNumber">
+            <input type="text" class="form-control" v-model="phoneNumber" value="9999999999">
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Enter your setup box number Name</span>
-            <input type="text" class="form-control" v-model="setupBoxNumber">
+            <input type="text" class="form-control" v-model="setupBoxNumber" value="MS001">
         </div>
         <button type="button" @click="viewAccount()"
             class="btn btn-primary">
@@ -97,7 +97,7 @@ methods:{
     },
     createPayment(){
         this.modalTitle="Make Payment";
-        axios.post(variables.API_URL+"account",{
+        axios.post("http://127.0.0.1:8000/account",{
             CustomerId:this.CustomerId,
             PaidAmount:this.PaymentAmount,
             DateOfPayment: date.toISOString().split('T')[0]
@@ -108,7 +108,7 @@ methods:{
         });
     },
     viewAccount(){
-        axios.get(variables.API_URL+"account",{ params : {
+        axios.get("http://127.0.0.1:8000/account",{ params : {
             phoneNumber:this.phoneNumber,
             setupBoxNumber:this.setupBoxNumber
         }})
@@ -116,6 +116,7 @@ methods:{
             this.customers = [];
             if(response.data.LastPaymentDate != null && +new Date(curYear,curMont) > +new Date(response.data.LastPaymentDate.substring(0,4), response.data.LastPaymentDate.substring(5,7))){
                 response.data.Pending = true;
+                response.data.PendingPayment = Number(response.data.Plan) * 3
             } else {
                 response.data.Pending = false;
             }
